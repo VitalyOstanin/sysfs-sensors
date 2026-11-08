@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.sysfs-sensors"
+          path="/org/gnome/shell/extensions/sysfs-sensors/">
+
+    <key name="show-fan" type="b">
+      <default>true</default>
+      <summary>Show fan speed</summary>
+      <description>Show the fan speed in RPM next to the CPU temperature.</description>
+    </key>
+
+    <key name="update-interval" type="u">
+      <range min="1" max="60"/>
+      <default>5</default>
+      <summary>Update interval</summary>
+      <description>Seconds between sensor reads.</description>
+    </key>
+
+    <key name="temperature-unit" type="s">
+      <choices>
+        <choice value="celsius"/>
+        <choice value="fahrenheit"/>
+      </choices>
+      <default>"celsius"</default>
+      <summary>Temperature unit</summary>
+      <description>Unit used to display the CPU temperature.</description>
+    </key>
+
+    <key name="warm-threshold" type="u">
+      <range min="30" max="120"/>
+      <default>80</default>
+      <summary>Warm threshold (°C)</summary>
+      <description>From this CPU temperature the panel text is highlighted as warm.</description>
+    </key>
+
+    <key name="hot-threshold" type="u">
+      <range min="30" max="120"/>
+      <default>90</default>
+      <summary>Hot threshold (°C)</summary>
+      <description>From this CPU temperature the panel text is highlighted as hot.</description>
+    </key>
+
+  </schema>
+</schemalist>

@@ -1,0 +1,7 @@
+.sysfs-sensors-warm {
+  color: #f8e45c;
+}
+
+.sysfs-sensors-hot {
+  color: #f66151;
+}

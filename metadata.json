@@ -1,0 +1,9 @@
+{
+  "uuid": "sysfs-sensors@VitalyOstanin",
+  "name": "Sysfs Sensors",
+  "description": "Shows the CPU package temperature and the fan speed in the top panel, highlighted when the CPU gets warm or hot. Values are read directly from /sys/class/hwmon with asynchronous file I/O; no external commands (sensors, nvme, cat) are spawned, so the shell never blocks waiting for a child process.",
+  "shell-version": ["45", "46", "47", "48", "49", "50", "51"],
+  "url": "https://github.com/VitalyOstanin/sysfs-sensors",
+  "settings-schema": "org.gnome.shell.extensions.sysfs-sensors",
+  "version-name": "1.0"
+}
