@@ -5,9 +5,18 @@ import Gio from "gi://Gio";
 import Gtk from "gi://Gtk";
 import { ExtensionPreferences } from "resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js";
 
-const UNITS = ["celsius", "fahrenheit"];
+// Ids match the temperature-unit choices in the schema.
+const UNITS = [
+  { id: "celsius", label: "Celsius (°C)" },
+  { id: "fahrenheit", label: "Fahrenheit (°F)" },
+];
 
-function spinRow(settings, key, title, subtitle, lower, upper) {
+// Bounds come from the key's <range> in the schema.
+function spinRow(settings, key, title, subtitle) {
+  const [, [lower, upper]] = settings.settings_schema
+    .get_key(key)
+    .get_range()
+    .recursiveUnpack();
   const row = new Adw.SpinRow({
     title,
     subtitle,
@@ -33,16 +42,18 @@ export default class SysfsSensorsPreferences extends ExtensionPreferences {
 
     const unitRow = new Adw.ComboRow({
       title: "Temperature unit",
-      model: Gtk.StringList.new(["Celsius (°C)", "Fahrenheit (°F)"]),
-      selected: Math.max(0, UNITS.indexOf(settings.get_string("temperature-unit"))),
+      model: Gtk.StringList.new(UNITS.map((u) => u.label)),
+      selected: UNITS.findIndex(
+        (u) => u.id === settings.get_string("temperature-unit"),
+      ),
     });
     unitRow.connect("notify::selected", () =>
-      settings.set_string("temperature-unit", UNITS[unitRow.selected]),
+      settings.set_string("temperature-unit", UNITS[unitRow.selected].id),
     );
     display.add(unitRow);
 
     display.add(
-      spinRow(settings, "update-interval", "Update interval", "Seconds", 1, 60),
+      spinRow(settings, "update-interval", "Update interval", "Seconds"),
     );
     page.add(display);
 
@@ -50,8 +61,8 @@ export default class SysfsSensorsPreferences extends ExtensionPreferences {
       title: "Heat highlight",
       description: "CPU temperature in °C at which the panel text changes color",
     });
-    heat.add(spinRow(settings, "warm-threshold", "Warm", "Yellow", 30, 120));
-    heat.add(spinRow(settings, "hot-threshold", "Hot", "Red", 30, 120));
+    heat.add(spinRow(settings, "warm-threshold", "Warm", "Yellow"));
+    heat.add(spinRow(settings, "hot-threshold", "Hot", "Red"));
     page.add(heat);
 
     window.add(page);

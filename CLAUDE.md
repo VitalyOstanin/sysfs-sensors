@@ -50,6 +50,7 @@ promisified async GIO calls already used in `extension.js`. See
 | `GLib.timeout_add_seconds`, `GLib.Source.remove`         | GLib        | stable                                        |
 | `Extension.getSettings()`, `connectObject`/`disconnectObject` on `Gio.Settings` | gnome-shell | since 45 |
 | `ExtensionPreferences.fillPreferencesWindow`, `getSettings()` | gnome-shell | `js/extensions/prefs.js`, since 45 |
+| `Gio.SettingsSchemaKey.get_range`, `GLib.Variant.recursiveUnpack` | GIO/GJS | spin row bounds read from the schema `<range>` |
 | `Adw.SwitchRow`, `Adw.SpinRow`, `Adw.ComboRow`, `Adw.PreferencesGroup` | libadwaita | SwitchRow and SpinRow since 1.4 (GNOME 45) |
 
 Sysfs interface: `/sys/class/hwmon/hwmon*/name`, `temp*_label`, `temp*_input`
