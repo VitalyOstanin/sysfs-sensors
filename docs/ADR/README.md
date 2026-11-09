@@ -14,3 +14,4 @@ extension, using a lightweight ADR format (Context / Decision / Consequences).
 | [0005](0005-support-gnome-45-to-51.md)      | Declare and verify support for GNOME 45-51                       | Accepted |
 | [0006](0006-settings.md)                    | Add a small set of settings                                      | Accepted |
 | [0007](0007-settings-menu.md)               | Open the preferences from a panel menu                           | Accepted |
+| [0008](0008-average-cpu-temperature.md)      | Show the CPU temperature averaged over the update interval       | Accepted |

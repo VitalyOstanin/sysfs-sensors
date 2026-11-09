@@ -26,7 +26,8 @@ the fan speed — read directly from `/sys/class/hwmon`.
 - **Fan speed** — the first readable `fan*_input` of any hwmon chip. It tells
   whether the laptop is already working to cool itself.
 
-Values refresh every 5 seconds. The text turns yellow from 80 °C and red from
+The temperature is sampled every second and the panel shows the average over
+the last 5 seconds, so short turbo spikes do not make the number jump. The text turns yellow from 80 °C and red from
 90 °C. If a sensor is missing, its number is omitted; if neither is found, the
 indicator stays hidden.
 

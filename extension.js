@@ -17,6 +17,7 @@ const HWMON_DIR = "/sys/class/hwmon";
 const ENUMERATE_BATCH = 100;
 const MILLIDEGREES_PER_DEGREE = 1000;
 const INTERVAL_KEY = "update-interval";
+const SAMPLE_PERIOD_S = 1;
 const PARTS_SEPARATOR = "  ";
 
 // hwmon chip name -> label of its whole-package temperature input.
@@ -161,7 +162,9 @@ export default class SysfsSensors extends Extension {
     this._cancellable = new Gio.Cancellable();
     this._timerId = 0;
     this._sensors = null;
-    this._updating = false;
+    this._samples = [];
+    this._ticks = 0;
+    this._busy = false;
 
     this._settings = this.getSettings();
     this._settings.connectObject(
@@ -192,36 +195,69 @@ export default class SysfsSensors extends Extension {
     this._restartTimer();
   }
 
+  // The CPU package is sampled every second and the panel shows the mean of
+  // the last update-interval samples: the package sensor follows turbo bursts
+  // and jumps by 10-15 °C within a second.
   _restartTimer() {
     if (!this._sensors) return;
     if (this._timerId) GLib.Source.remove(this._timerId);
+    this._ticks = 0;
 
     this._timerId = GLib.timeout_add_seconds(
       GLib.PRIORITY_DEFAULT,
-      this._settings.get_uint(INTERVAL_KEY),
+      SAMPLE_PERIOD_S,
       () => {
-        this._refresh();
+        this._tick();
         return GLib.SOURCE_CONTINUE;
       },
     );
   }
 
-  // Skip the tick while a slow read is still pending.
+  _tick() {
+    const show = ++this._ticks >= this._settings.get_uint(INTERVAL_KEY);
+    if (show) this._ticks = 0;
+    this._run(async (cancellable) => {
+      await this._sample(cancellable);
+      if (show) await this._update(cancellable);
+    });
+  }
+
   _refresh() {
-    if (!this._sensors || this._updating) return;
-    this._updating = true;
-    this._update(this._cancellable)
+    this._run(async (cancellable) => {
+      if (this._samples.length === 0) await this._sample(cancellable);
+      await this._update(cancellable);
+    });
+  }
+
+  // Skip the tick while a slow read is still pending.
+  _run(task) {
+    if (!this._sensors || this._busy) return;
+    this._busy = true;
+    task(this._cancellable)
       .catch((e) => {
         if (!isCancelled(e)) logError(e, "sysfs-sensors: update failed");
       })
       .finally(() => {
-        this._updating = false;
+        this._busy = false;
       });
+  }
+
+  async _sample(cancellable) {
+    const value = await readInteger(this._sensors.cpu, cancellable);
+    if (value === null) {
+      this._samples = [];
+      return;
+    }
+    this._samples.push(value);
+    const keep = this._settings.get_uint(INTERVAL_KEY);
+    this._samples.splice(0, Math.max(0, this._samples.length - keep));
   }
 
   async _update(cancellable) {
     const showFan = this._settings.get_boolean("show-fan");
-    const cpu = await readInteger(this._sensors.cpu, cancellable);
+    const cpu = this._samples.length
+      ? this._samples.reduce((a, b) => a + b) / this._samples.length
+      : null;
     const fan = showFan
       ? await readInteger(this._sensors.fan, cancellable)
       : null;
@@ -259,5 +295,6 @@ export default class SysfsSensors extends Extension {
     this._indicator.destroy();
     this._indicator = null;
     this._sensors = null;
+    this._samples = [];
   }
 }
