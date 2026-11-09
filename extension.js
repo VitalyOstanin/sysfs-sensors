@@ -134,19 +134,23 @@ async function findSensors(cancellable) {
 
 const SensorsIndicator = GObject.registerClass(
   class SensorsIndicator extends PanelMenu.Button {
-    _init(name) {
-      super._init(0.5, name, true /* dontCreateMenu */);
+    _init(name, openPreferences) {
+      super._init(0.5, name);
       this._label = new St.Label({
         text: "",
+        style_class: "sysfs-sensors-label",
         y_align: Clutter.ActorAlign.CENTER,
       });
       this.add_child(this._label);
+      this.menu.addAction("Settings", openPreferences);
       this.hide();
     }
 
     setText(text, level) {
       this._label.text = text;
-      this._label.style_class = level ? `sysfs-sensors-${level}` : "";
+      for (const l of [LEVEL_WARM, LEVEL_HOT])
+        this._label.remove_style_class_name(`sysfs-sensors-${l}`);
+      if (level) this._label.add_style_class_name(`sysfs-sensors-${level}`);
       this.visible = text !== "";
     }
   },
@@ -169,7 +173,9 @@ export default class SysfsSensors extends Extension {
       this,
     );
 
-    this._indicator = new SensorsIndicator(this.metadata.name);
+    this._indicator = new SensorsIndicator(this.metadata.name, () =>
+      this.openPreferences(),
+    );
     Main.panel.addToStatusArea(this.uuid, this._indicator);
 
     this._start(this._cancellable).catch((e) => {

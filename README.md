@@ -39,8 +39,8 @@ indicator stays hidden.
 | Update interval  | 5 s        | 1-60 s                                        |
 | Warm / Hot       | 80 / 90 °C | thresholds for the yellow and red highlight   |
 
-Open them with `gnome-extensions prefs sysfs-sensors@VitalyOstanin` or from the
-Extensions app. Changes apply immediately.
+Open them from the indicator menu (click the temperature, then Settings), with
+`gnome-extensions prefs sysfs-sensors@VitalyOstanin` or from the Extensions app. Changes apply immediately.
 
 ## Why another sensors extension
 

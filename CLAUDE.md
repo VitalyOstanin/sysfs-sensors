@@ -17,8 +17,8 @@ Guidance for AI agents and contributors working on this extension.
 
 `sysfs-sensors` shows the CPU package temperature and the fan speed in the top
 panel, read from `/sys/class/hwmon`. The scope is deliberately two numbers that
-answer "is the laptop getting hot?", with a heat highlight and five settings
-(ADR 0006). Read the ADRs in [docs/ADR](docs/ADR)
+answer "is the laptop getting hot?", with a heat highlight, five settings (ADR 0006) and a
+Settings item in the panel menu (ADR 0007). Read the ADRs in [docs/ADR](docs/ADR)
 before widening it.
 
 ## Hard constraint: GNOME 45-51
@@ -50,6 +50,7 @@ promisified async GIO calls already used in `extension.js`. See
 | `GLib.timeout_add_seconds`, `GLib.Source.remove`         | GLib        | stable                                        |
 | `Extension.getSettings()`, `connectObject`/`disconnectObject` on `Gio.Settings` | gnome-shell | since 45 |
 | `ExtensionPreferences.fillPreferencesWindow`, `getSettings()` | gnome-shell | `js/extensions/prefs.js`, since 45 |
+| `Extension.openPreferences()`, `PopupMenu.addAction(title, callback, icon)` | gnome-shell | Settings item in the panel menu, since 45 |
 | `Gio.SettingsSchemaKey.get_range`, `GLib.Variant.recursiveUnpack` | GIO/GJS | spin row bounds read from the schema `<range>` |
 | `Adw.SwitchRow`, `Adw.SpinRow`, `Adw.ComboRow`, `Adw.PreferencesGroup` | libadwaita | SwitchRow and SpinRow since 1.4 (GNOME 45) |
 

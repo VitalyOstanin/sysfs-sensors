@@ -1,3 +1,8 @@
+.sysfs-sensors-label {
+  padding: 0 10px;
+  font-feature-settings: "tnum";
+}
+
 .sysfs-sensors-warm {
   color: #f8e45c;
 }

@@ -1,6 +1,6 @@
 # 0002 - Show only the CPU package temperature and the fan speed
 
-Status: Accepted (the "no settings" part superseded by 0006)
+Status: Accepted (the "no settings" part superseded by 0006, the "no menu" part by 0007)
 
 ## Context
 
